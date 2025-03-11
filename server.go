@@ -29,6 +29,12 @@ func Start(host string, limit, interval int) error {
 		proxy.ServeHTTP(w, r)
 	})
 
-	slog.Info("Starting server on", slog.String("host", host), slog.Int("limit", limit), slog.Int("interval", interval))
+	slog.Info(
+		"Starting server on :8080",
+		slog.String("host", host),
+		slog.Int("limit", limit),
+		slog.Int("interval", interval),
+	)
+
 	return http.ListenAndServe(":8080", router)
 }
