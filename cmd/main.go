@@ -15,13 +15,19 @@ func main() {
 		Usage: "start the server",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:     "host",
-				Usage:    "server host",
+				Name:     "to",
+				Usage:    "remote host to proxy requests to",
 				Required: true,
 			},
 			&cli.IntFlag{
+				Name:     "port",
+				Usage:    "port to listen on",
+				Value:    8080,
+				Required: false,
+			},
+			&cli.IntFlag{
 				Name:     "limit",
-				Usage:    "limit requests per minute",
+				Usage:    "limit requests per-ip",
 				Required: true,
 			},
 			&cli.IntFlag{
@@ -32,9 +38,10 @@ func main() {
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return kongsy.Start(
-				cmd.String("host"),
-				int(cmd.Int("limit")),
-				int(cmd.Int("interval")),
+				cmd.String("to"),
+				cmd.Int("port"),
+				cmd.Int("limit"),
+				cmd.Int("interval"),
 			)
 		},
 	}

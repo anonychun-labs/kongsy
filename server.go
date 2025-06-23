@@ -12,13 +12,13 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func Start(host string, limit, interval int) error {
+func Start(to string, port, limit, interval int) error {
 	router := chi.NewRouter()
 	router.Use(middleware.Recoverer)
 	router.Use(LimitByRealIP(limit, time.Duration(interval)*time.Second))
 	router.Use(middleware.Logger)
 
-	remote, err := url.Parse(host)
+	remote, err := url.Parse(to)
 	if err != nil {
 		return fmt.Errorf("failed to parse remote URL: %w", err)
 	}
@@ -30,11 +30,14 @@ func Start(host string, limit, interval int) error {
 	})
 
 	slog.Info(
-		"Starting server on :8080",
-		slog.String("host", host),
+		fmt.Sprintf("Starting server on :%d", port),
+		slog.String("to", to),
 		slog.Int("limit", limit),
 		slog.Int("interval", interval),
 	)
 
-	return http.ListenAndServe(":8080", router)
+	return http.ListenAndServe(
+		fmt.Sprintf(":%d", port),
+		router,
+	)
 }
