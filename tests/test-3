@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# mengirimkan 30 request per detik ke server API yang memiliki batas rate limit 20 request per detik
+
+# ./bin/server start --to=http://172.31.143.108:4000 --port=8080 --limit=20 --interval=1
+
+echo 'GET http://127.0.0.1:8080/ping' | \
+    vegeta attack -rate 30 -duration 30s | vegeta encode | \
+    jaggr @count=rps \
+          hist\[100,200,300,400,500\]:code \
+          p25,p50,p95:latency \
+          sum:bytes_in \
+          sum:bytes_out | \
+    jplot rps+code.hist.100+code.hist.200+code.hist.300+code.hist.400+code.hist.500 \
+          latency.p95+latency.p50+latency.p25 \
+          bytes_in.sum+bytes_out.sum
