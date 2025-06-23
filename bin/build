@@ -1,0 +1,3 @@
+#!/bin/bash
+
+go build -o _out/main ./cmd/main.go
